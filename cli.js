@@ -57,7 +57,6 @@ cli
 function getInfo (videoId) {
   return new Promise((resolve, reject) => {
     dl.getInfo(`http://fast.wistia.net/embed/iframe/${videoId}`, function (err, info) {
-      console.log(`Download video ${info._filename}`)
       if (err) { return reject(err) }
       resolve(info)
     })
@@ -65,6 +64,7 @@ function getInfo (videoId) {
 }
 
 function pipeToDrive ({video, parentId}, cb) {
+  console.log(`Download video ${video._filename}`)
   dl(`http://fast.wistia.net/embed/iframe/${video.id}`).pipe(
     store.createWriteStream({
       filename: video._filename,
