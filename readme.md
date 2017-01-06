@@ -1,6 +1,6 @@
 
 # fem
-`fem` is cli tool to download frontendmaster.com course videos directly to your google drive
+`fem` is cli tool to download FrontendMasters.com course videos directly to your google drive
 
 ## Installation
 
@@ -35,7 +35,7 @@ node cli.js dl https://frontendmasters.com/courses/lean-front-end-engineering/ 0
 ```
 
 ## Why download
-Frontend Master courses are super awesome and cover a lot in-deep stuffs. I need to download them to my google drive and re-watching them whatever I want. I am stupid, can't understand all in 1 run.
+FrontendMasters.com courses are super awesome and cover a lot in-deep stuffs. I need to download them to my google drive and re-watching them whatever I want. I am stupid, can't understand all in 1 run.
 
 This script by any mean isn't a hack or cheat, you need frontend master subscription in order to use.
 
