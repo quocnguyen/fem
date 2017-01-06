@@ -12,7 +12,7 @@ cp .env-sample .env
 
 ## Config
 
-in `.env` file.
+put your config in `.env` file.
 
 | KEY  | MEAN |
 | ------------- | ------------- |
@@ -25,7 +25,7 @@ in `.env` file.
 ## How to use
 
 ```
-node cli.js dl <course url> <google drive folder id>
+node cli.js dl <COURSE URL> <GOOGLE DRIVE FOLDER ID>
 ```
 
 ## Example
@@ -37,9 +37,9 @@ node cli.js dl https://frontendmasters.com/courses/lean-front-end-engineering/ 0
 ## Why download
 Frontend Master courses are super awesome and cover a lot in-deep stuffs. I need to download them to my google drive and re-watching them whatever I want. I am stupid, can't understand all in 1 run.
 
-This script is by any mean not a hack or cheat, you need frontend master subscriptions in order to use.
+This script by any mean isn't a hack or cheat, you need frontend master subscription in order to use.
 
-Buy their subscription. Tt's worth every penny. Finger crossed.
+Buy their subscription. It's worth every penny, you got my word, finger crossed.
 
 # License
 
