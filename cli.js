@@ -64,7 +64,6 @@ function getInfo (videoId) {
 }
 
 function pipeToDrive ({video, parentId}, cb) {
-  console.log(`Download video ${video._filename}`)
   dl(`http://fast.wistia.net/embed/iframe/${video.id}`).pipe(
     store.createWriteStream({
       filename: video._filename,
