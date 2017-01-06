@@ -16,10 +16,11 @@
     "cheerio": "0.22.0",
     "co": "4.6.0",
     "commander": "2.9.0",
-    "execa": "0.5.0",
-    "inquirer": "1.2.3",
+    "dotenv": "^2.0.0",
+    "google-drive-blobs": "^4.0.0",
     "mkdirp": "0.5.1",
     "queue": "4.0.0",
-    "superagent": "3.1.0"
+    "superagent": "3.1.0",
+    "youtube-dl": "^1.11.1"
   }
 }

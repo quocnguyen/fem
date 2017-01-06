@@ -1,86 +1,75 @@
 #!/usr/bin/env node
 
 'use strict'
-
+require('dotenv').config({silent: true})
 const cli = require('commander')
 const request = require('superagent')
 const cheerio = require('cheerio')
 const co = require('co')
-// const ask = require('inquirer').prompt
-const execa = require('execa')
+const dl = require('youtube-dl')
+const gdb = require('google-drive-blobs')
 const queue = require('queue')({
   concurrency: 5
 })
-cli
-.version('0.0.2')
+const store = gdb({
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+})
 
 cli
-  .command('dl <url>')
+.version('0.0.3')
+
+cli
+  .command('dl <url> <parentId>')
   .description('download fem course url')
-  .action(function (url) {
+  .action(function (url, parentId) {
     co(function *() {
-      let agent = request.agent()
-      let res = yield agent.get('https://frontendmasters.com/login/')
-      let $ = cheerio.load(res.text)
-      let form = $('#rcp_login_form')
-      let nonce = form.find('input[name="rcp_login_nonce"]').val()
-      // let answer = yield ask([
-      //   {
-      //     type: 'text',
-      //     message: 'Your frontendmasters username',
-      //     name: 'username'
-      //   },
-      //   {
-      //     type: 'password',
-      //     message: 'Your frontendmasters password',
-      //     name: 'password'
-      //   }
-      // ])
-
-      let answer = {
-        username: 'quocnguyen@clgt.vn',
-        password: 'clgtteam'
-      }
-
-      res = yield agent
-        .post('https://frontendmasters.com/login/')
-        .type('form')
-        .send({
-          rcp_user_login: answer.username,
-          rcp_user_pass: answer.password,
-          rcp_action: 'login',
-          rcp_redirect: '/courses/',
-          rcp_login_nonce: nonce,
-          rcp_login_submit: 'Login'
-        })
-
-      res = yield agent.get(url)
-      $ = cheerio.load(res.text)
+      const agent = request.agent()
+      const res = yield agent
+        .get(url)
+        .set('Cookie', process.env.COOKIE)
+      const $ = cheerio.load(res.text)
       let videos = $('.video-link').map(function () {
         return $(this).attr('href').replace('#v=', '')
       }).get()
 
       console.log(`Total videos: ${videos.length}`)
-      // let courseName = url.split('/courses/')[1].split('/').join('')
-      // mkdirp.sync(`download/${courseName}`)
 
-      videos.forEach(function (video, idx, list) {
+      videos.forEach(function (videoId, idx, list) {
         queue.push(function (cb) {
-          console.log(`download video ${idx}/${list.length}....`)
-          let cmd = execa('youtube-dl', [`http://fast.wistia.net/embed/iframe/${video}`])
-          cmd.then(function () {
-            console.log(`downloaded video ${idx}/${list.length}`, video)
-            cb()
-          })
+          getInfo(videoId).then(video => pipeToDrive({video, parentId}, cb))
         })
+      })
+
+      queue.on('success', function (result, job) {
+        console.log(`Done: ${result.title}`)
       })
 
       queue.start(function (err) {
         if (err) console.log(err)
-        console.log('all done')
+        console.log('Completed!')
       })
     })
     .catch(console.log)
   })
+
+function getInfo (videoId) {
+  return new Promise((resolve, reject) => {
+    dl.getInfo(`http://fast.wistia.net/embed/iframe/${videoId}`, function (err, info) {
+      if (err) { return reject(err) }
+      resolve(info)
+    })
+  })
+}
+
+function pipeToDrive ({video, parentId}, cb) {
+  dl(`http://fast.wistia.net/embed/iframe/${video.id}`).pipe(
+    store.createWriteStream({
+      filename: video._filename,
+      parent: parentId
+    }, cb)
+  )
+}
 
 cli.parse(process.argv)
